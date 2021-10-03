@@ -52,12 +52,15 @@ if args.encrypt:
 	print('Encrypting text: ' + args.text)
 	
 	# generate 16 subkeys 
-	print('K:  ' + str(key))
+	print('K   ' + str(key))
 	key = permute_56bit()
-	print('K+: ' + str(key))
+	print('K+  ' + str(key))
 	
+	left_key  = key[:30]
+	right_key = '0b' + key[30:66]
+	print('C   ' + str(left_key))
+	print('D   ' + str(right_key))
 	
-
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
 
