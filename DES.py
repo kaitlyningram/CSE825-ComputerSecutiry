@@ -16,14 +16,21 @@ permute_key = [ 57, 49, 41, 33, 25, 17,  9,
 				 7, 62, 54, 46, 38, 30, 22,
 				14,  6, 61, 53, 45, 37, 29,
 				21, 13,  5, 28, 20, 12,  4]
-				
-				
+								
 def permute_56bit():
 	str = '0b'
 	for c in permute_key:
 		# generate 56 bit key
 		str = str + key[int(c)+1]
 	return str
+
+def shift_key(left_key, right_key, shift):
+	left_key  = '0b' + left_key[2+shift:30] + left_key[2:2+shift]
+	right_key = '0b' + right_key[2+shift:30] + right_key[2:2+shift]
+	
+	return left_key, right_key
+	
+
 
 # parse command line arguments
 parser = argparse.ArgumentParser()
@@ -60,6 +67,10 @@ if args.encrypt:
 	right_key = '0b' + key[30:66]
 	print('C   ' + str(left_key))
 	print('D   ' + str(right_key))
+	
+	left_key, right_key = shift_key(left_key, right_key, 1)
+	left_key, right_key = shift_key(left_key, right_key, 1)
+	left_key, right_key = shift_key(left_key, right_key, 2)
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
