@@ -6,7 +6,6 @@
 # ******************************************************************************
 
 import argparse
-import base64
 
 permute_key56 = [ 57, 49, 41, 33, 25, 17,  9,
 				   1, 58, 50, 42, 34, 26, 18,
@@ -281,27 +280,30 @@ elif not args.encrypt and not args.decrypt:
 permute_keys = generate_subkeys()
 
 # convert text to hex input
-text = int('0x' + args.text, 16)
+hex_text = args.text.encode("utf-8").hex()
+
+# add padding
+# text = int('0x' + args.text, 16)
 
 
 output = ''
 
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
-	output = encode(text, permute_keys)
 	
+	n = len(hex_text)
+	while n > 0:
+		# add padding to text
+		input = '{:<016}'.format(hex_text[:16])
+		input = int('0x' + hex_text[:16], 16)
+		hex_text = hex_text[16:]
+		output = output + encode(input, permute_keys)
+		n = n - 16
+		
 	# convert binary output to hex string
-	#output = hex(int(output, 2))
+	output = hex(int(output, 2))	
 	
-	message = args.text
-	message_bytes = message.encode('ascii') 
-	base64_bytes = base64.b64encode(message_bytes) 
-	output = base64_bytes.decode('ascii') 
-	
-	
-	
-	
-	print('Encrypted ciphertext: ' + output[2:].upper())
+	print('Encrypted ciphertext: 0x' + output[2:].upper())
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
