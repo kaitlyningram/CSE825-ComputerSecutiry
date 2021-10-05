@@ -279,18 +279,12 @@ elif not args.encrypt and not args.decrypt:
 # generate subkeys
 permute_keys = generate_subkeys()
 
-# convert text to hex input
-hex_text = args.text.encode("utf-8").hex()
-
-# add padding
-# text = int('0x' + args.text, 16)
-
-
 output = ''
 
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
 	
+	hex_text = args.text.encode("utf-8").hex()
 	n = len(hex_text)
 	while n > 0:
 		# add padding to text
@@ -307,10 +301,16 @@ if args.encrypt:
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
-	text = int('0x0123456789ABCDEF', 16)
-	output = encode(text, permute_keys)
 	
-	# convert binary output to hex string
+	n = len(args.text)-2
+	hex_text = args.text[2:]
+	while n > 0:
+		input = int('0x' + hex_text[:16], 16)
+		hex_text = hex_text[16:]
+		output = output + decode(input, permute_keys)
+		n = n - 16
+	
 	output = hex(int(output, 2))
+	output = bytes.fromhex(output[2:])
 	
-	print('Decrypted plaintext: ' + output[2:].upper())
+	print('Decrypted plaintext: ' + output.decode('utf-8'))
