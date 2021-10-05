@@ -89,7 +89,7 @@ def shift_key(left_key, right_key, shift):
 	
 	return left_key, right_key
 	
-def encode(plaintext):
+def encode(plaintext, permuted_keys):
 	plaintext = format(plaintext, '#066b')
 	ciphertext = ''
 	
