@@ -98,7 +98,7 @@ ip_inverse = [40,  8, 48, 16, 56, 24, 64, 32,
 			  37,  5, 45, 13, 53, 21, 61, 29,
 			  36,  4, 44, 12, 52, 20, 60, 28,
 			  35,  3, 43, 11, 51, 19, 59, 27,
-			  34,  2, 43, 10, 50, 18, 58, 26,
+			  34,  2, 42, 10, 50, 18, 58, 26,
 			  33,  1, 41,  9, 49, 17, 57, 25 ]
 
 shift_num = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
@@ -307,7 +307,8 @@ if args.encrypt:
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
-	output = decode(text, permute_keys)
+	text = int('0x0123456789ABCDEF', 16)
+	output = encode(text, permute_keys)
 	
 	# convert binary output to hex string
 	output = hex(int(output, 2))
