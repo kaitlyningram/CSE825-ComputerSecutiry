@@ -74,7 +74,12 @@ def shift_key(left_key, right_key, shift):
 	
 	return left_key, right_key
 	
-def decode():
+def encode(plaintext)
+	ciphertext = ''
+	
+	return ciphertext
+	
+def decode(ciphertext):
 	plaintext = ''
 
 	return plaintext
