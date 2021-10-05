@@ -132,6 +132,69 @@ def decode(ciphertext, permuted_keys):
 		s_output = s_output + s_block(s1, right[38:44])[2:]
 		s_output = s_output + s_block(s1, right[44:50])[2:]
 		
+		s_output = s_block(s2, str(right[2:8]))
+		s_output = s_output + s_block(s2, right[8:14])[2:]
+		s_output = s_output + s_block(s2, right[14:20])[2:]
+		s_output = s_output + s_block(s2, right[20:26])[2:]
+		s_output = s_output + s_block(s2, right[26:32])[2:]
+		s_output = s_output + s_block(s2, right[32:38])[2:]
+		s_output = s_output + s_block(s2, right[38:44])[2:]
+		s_output = s_output + s_block(s2, right[44:50])[2:]
+		
+		s_output = s_block(s3, str(right[2:8]))
+		s_output = s_output + s_block(s3, right[8:14])[2:]
+		s_output = s_output + s_block(s3, right[14:20])[2:]
+		s_output = s_output + s_block(s3, right[20:26])[2:]
+		s_output = s_output + s_block(s3, right[26:32])[2:]
+		s_output = s_output + s_block(s3, right[32:38])[2:]
+		s_output = s_output + s_block(s3, right[38:44])[2:]
+		s_output = s_output + s_block(s3, right[44:50])[2:]
+		
+		s_output = s_block(s4, str(right[2:8]))
+		s_output = s_output + s_block(s4, right[8:14])[2:]
+		s_output = s_output + s_block(s4, right[14:20])[2:]
+		s_output = s_output + s_block(s4, right[20:26])[2:]
+		s_output = s_output + s_block(s4, right[26:32])[2:]
+		s_output = s_output + s_block(s4, right[32:38])[2:]
+		s_output = s_output + s_block(s4, right[38:44])[2:]
+		s_output = s_output + s_block(s4, right[44:50])[2:]
+		
+		s_output = s_block(s5, str(right[2:8]))
+		s_output = s_output + s_block(s5, right[8:14])[2:]
+		s_output = s_output + s_block(s5, right[14:20])[2:]
+		s_output = s_output + s_block(s5, right[20:26])[2:]
+		s_output = s_output + s_block(s5, right[26:32])[2:]
+		s_output = s_output + s_block(s5, right[32:38])[2:]
+		s_output = s_output + s_block(s5, right[38:44])[2:]
+		s_output = s_output + s_block(s5, right[44:50])[2:]
+		
+		s_output = s_block(s6, str(right[2:8]))
+		s_output = s_output + s_block(s6, right[8:14])[2:]
+		s_output = s_output + s_block(s6, right[14:20])[2:]
+		s_output = s_output + s_block(s6, right[20:26])[2:]
+		s_output = s_output + s_block(s6, right[26:32])[2:]
+		s_output = s_output + s_block(s6, right[32:38])[2:]
+		s_output = s_output + s_block(s6, right[38:44])[2:]
+		s_output = s_output + s_block(s6, right[44:50])[2:]
+		
+		s_output = s_block(s7, str(right[2:8]))
+		s_output = s_output + s_block(s7, right[8:14])[2:]
+		s_output = s_output + s_block(s7, right[14:20])[2:]
+		s_output = s_output + s_block(s7, right[20:26])[2:]
+		s_output = s_output + s_block(s7, right[26:32])[2:]
+		s_output = s_output + s_block(s7, right[32:38])[2:]
+		s_output = s_output + s_block(s7, right[38:44])[2:]
+		s_output = s_output + s_block(s7, right[44:50])[2:]
+		
+		s_output = s_block(s8, str(right[2:8]))
+		s_output = s_output + s_block(s8, right[8:14])[2:]
+		s_output = s_output + s_block(s8, right[14:20])[2:]
+		s_output = s_output + s_block(s8, right[20:26])[2:]
+		s_output = s_output + s_block(s8, right[26:32])[2:]
+		s_output = s_output + s_block(s8, right[32:38])[2:]
+		s_output = s_output + s_block(s8, right[38:44])[2:]
+		s_output = s_output + s_block(s8, right[44:50])[2:]
+		
 		print(s_output)
 
 	return plaintext
