@@ -6,6 +6,7 @@
 # ******************************************************************************
 
 import argparse
+import base64
 
 permute_key56 = [ 57, 49, 41, 33, 25, 17,  9,
 				   1, 58, 50, 42, 34, 26, 18,
@@ -290,7 +291,15 @@ if args.encrypt:
 	output = encode(text, permute_keys)
 	
 	# convert binary output to hex string
-	output = hex(int(output, 2))
+	#output = hex(int(output, 2))
+	
+	message = args.text
+	message_bytes = message.encode('ascii') 
+	base64_bytes = base64.b64encode(message_bytes) 
+	output = base64_bytes.decode('ascii') 
+	
+	
+	
 	
 	print('Encrypted ciphertext: ' + output[2:].upper())
 	
