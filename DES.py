@@ -105,7 +105,7 @@ shift_num = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 	
 def generate_subkeys():
 	# hardcoded key
-	key = 0x133457799bbcdff1
+	key = 0x13345779abbcdff1
 	key = format(key, '#066b')
 	
 	# convert key to 56-bit 
