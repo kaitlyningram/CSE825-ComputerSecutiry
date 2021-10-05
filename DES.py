@@ -30,6 +30,7 @@ init_permute  = [ 58, 50, 42, 34, 26, 18, 10,  2,
 				  62, 54, 46, 38, 30, 22, 14,  6,
 				  64, 56, 48, 40, 32, 24, 16,  8,
 				  57, 49, 41, 33, 25, 17,  9,  1,
+				  59, 51, 43, 35, 27, 19, 11,  3,
 				  61, 53, 45, 37, 29, 21, 13,  5,
 				  63, 55, 47, 39, 31, 23, 15,  7 ]
 
@@ -82,14 +83,15 @@ def encode(plaintext):
 	
 def decode(ciphertext):
 	ciphertext = format(ciphertext, '#066b')
+	plaintext = ''
 	ip = '0b'
+	print(ciphertext)
 	
 	for c in init_permute:
 		ip = ip + ciphertext[int(c)+1]
-	
-	print(ip)
-	
-	plaintext = ''
+
+	left_key  = ip[:34]
+	right_key = '0b' + ip[34:70]
 
 	return plaintext
 
