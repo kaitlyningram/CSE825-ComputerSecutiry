@@ -88,6 +88,12 @@ def encode(plaintext):
 	plaintext = format(plaintext, '#066b')
 	ciphertext = ''
 	
+	for i in range(0, len(permuted_keys)):
+		if permuted_keys[i] in generate_subkeys():
+			ciphertext += ciphertext[permuted_keys[i]]
+		else: 
+			ciphertext += permuted_keys[i]
+	
 	return ciphertext
 	
 def decode(ciphertext):
