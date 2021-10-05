@@ -7,7 +7,6 @@
 
 import argparse
 
-key = 0x133457799bbcdff1
 permute_key56 = [ 57, 49, 41, 33, 25, 17,  9,
 				   1, 58, 50, 42, 34, 26, 18,
 				  10,  2, 59, 51, 43, 35, 27,
@@ -26,6 +25,14 @@ permute_key48 = [ 14, 17, 11, 24,  1,  5,
 				  44, 49, 39, 56, 34, 53,
 				  46, 42, 50, 36, 29, 32 ]
 				
+init_permute  = [ 58, 50, 42, 34, 26, 18, 10,  2,
+				  60, 52, 44, 36, 28, 20, 12,  4,
+				  62, 54, 46, 38, 30, 22, 14,  6,
+				  64, 56, 48, 40, 32, 24, 16,  8,
+				  57, 49, 41, 33, 25, 17,  9,  1,
+				  61, 53, 45, 37, 29, 21, 13,  5,
+				  63, 55, 47, 39, 31, 23, 15,  7 ]
+
 shift_num = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 	
 def generate_subkeys():
@@ -67,7 +74,10 @@ def shift_key(left_key, right_key, shift):
 	
 	return left_key, right_key
 	
+def decode():
+	plaintext = ''
 
+	return plaintext
 
 # parse command line arguments
 parser = argparse.ArgumentParser()
@@ -94,8 +104,6 @@ permute_keys = generate_subkeys()
 
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
-	
-	print(permute_keys)
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
