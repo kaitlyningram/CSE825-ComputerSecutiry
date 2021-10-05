@@ -74,7 +74,7 @@ def shift_key(left_key, right_key, shift):
 	
 	return left_key, right_key
 	
-def encode(plaintext)
+def encode(plaintext):
 	ciphertext = ''
 	
 	return ciphertext
