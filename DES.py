@@ -75,11 +75,20 @@ def shift_key(left_key, right_key, shift):
 	return left_key, right_key
 	
 def encode(plaintext):
+	plaintext = format(plaintext, '#066b')
 	ciphertext = ''
 	
 	return ciphertext
 	
 def decode(ciphertext):
+	ciphertext = format(ciphertext, '#066b')
+	ip = '0b'
+	
+	for c in init_permute:
+		ip = ip + ciphertext[int(c)+1]
+	
+	print(ip)
+	
 	plaintext = ''
 
 	return plaintext
@@ -107,9 +116,13 @@ elif not args.encrypt and not args.decrypt:
 # generate subkeys
 permute_keys = generate_subkeys()
 
+# convert text to hex input
+text = int('0x' + args.text, 16)
+
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
+	decode(text)
 
