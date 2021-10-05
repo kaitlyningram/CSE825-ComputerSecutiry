@@ -294,8 +294,8 @@ if args.encrypt:
 	#output = hex(int(output, 2))
 	
 	message = args.text
-	message_byte = message.encode('ascii') 
-	base64_byte = base64.b64encode(message_bytes) 
+	message_bytes = message.encode('ascii') 
+	base64_bytes = base64.b64encode(message_bytes) 
 	output = base64_bytes.decode('ascii') 
 	
 	
