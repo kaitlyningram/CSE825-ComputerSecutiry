@@ -47,7 +47,7 @@ s1 = [[14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7],
 	  [ 0, 15,  7,  4, 14,  2, 13,  1, 10,  6, 12, 11,  9,  5,  3,  8],
 	  [ 4,  1, 14,  8, 13,  6,  2, 11, 15, 12,  9,  7,  3, 10,  5,  0],
 	  [15, 12,  8,  2,  4,  9,  1,  7,  5, 11,  3, 14, 10,  0,  6, 13]]
-
+	  
 s2 = [[15,  1, 8,  14,  6, 11, 3,  4,  9, 7,  2, 13,  12,  0,  5,  10],
 	  [ 3, 13,  4,  7, 15,  2, 8,  14, 12,  0, 1, 10,  6,  9,  11,  5],
 	  [ 0,  14, 7,  11, 10,  4,  13, 1, 5, 8,  12,  6,  9, 3,  2,  15],
@@ -82,6 +82,24 @@ s8 = [[13,  2, 8,  4,  6, 15, 11,  1,  10, 9,  3, 14,  5,  0,  12,  7],
 	  [ 1, 15,  13,  8, 10,  3, 7,  4, 12,  5, 6, 11,  0,  14,  9,  2],
 	  [ 7,  11, 4,  1, 9,  12,  14, 2, 0, 6,  10,  13,  15, 3,  5,  8],
 	  [2, 1,  14,  7,  4,  10,  8,  13, 15,  12, 9, 0,  3,  5, 6, 11]]
+	  
+p  = [16,  7, 20, 21,
+	  29, 12, 28, 17,
+	   1, 15, 23, 26,
+	   5, 18, 31, 10,
+	   2,  8, 24, 14,
+	  32, 27,  3,  9,
+	  19, 13, 30,  6,
+	  22, 11,  4, 25 ]
+
+ip_inverse = [40,  8, 48, 16, 56, 24, 64, 32,
+			  39,  7, 47, 15, 55, 23, 63, 31,
+			  38,  6, 46, 14, 54, 22, 62, 30,
+			  37,  5, 45, 13, 53, 21, 61, 29,
+			  36,  4, 44, 12, 52, 20, 60, 28,
+			  35,  3, 43, 11, 51, 19, 59, 27,
+			  34,  2, 43, 10, 50, 18, 58, 26,
+			  33,  1, 41,  9, 49, 17, 57, 25 ]
 
 shift_num = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 	
@@ -124,18 +142,6 @@ def shift_key(left_key, right_key, shift):
 	
 	return left_key, right_key
 	
-def encode(plaintext, permuted_keys):
-	plaintext = format(plaintext, '#066b')
-	ciphertext = ''
-	
-	#for i in range(0, len(permuted_keys)):
-		#if permuted_keys[i] in generate_subkeys():
-			#ciphertext += ciphertext[permuted_keys[i]]
-		#else: 
-			#ciphertext += permuted_keys[i]
-	
-	return ciphertext
-	
 def decode(ciphertext, permuted_keys):
 	ciphertext = format(ciphertext, '#066b')
 	plaintext = ''
@@ -147,11 +153,52 @@ def decode(ciphertext, permuted_keys):
 	left_key  = ip[:34]
 	right_key = '0b' + ip[34:70]
 	
-	left_blocks  = []
-	right_blocks = []
+	for n in range(16):
+		f = '0b'
+		for c in e_bit_table:
+			f = f + right_key[int(c)+1]
+			
+		right = xor(f, permuted_keys[15-n]) # this is K_n xor E(R_n-1)
+		# use s-blocks
+		s_output = s_block(s1, str(right[2:8]))
+		s_output = s_output + s_block(s2, right[8:14])[2:]
+		s_output = s_output + s_block(s3, right[14:20])[2:]
+		s_output = s_output + s_block(s4, right[20:26])[2:]
+		s_output = s_output + s_block(s5, right[26:32])[2:]
+		s_output = s_output + s_block(s6, right[32:38])[2:]
+		s_output = s_output + s_block(s7, right[38:44])[2:]
+		s_output = s_output + s_block(s8, right[44:50])[2:]
+		
+		f = '0b'
+		for i in p:
+			f = f + s_output[int(i)+1]
+		
+		#print(s_output)
+		#print(f)
+		
+		f = xor(f, left_key)
+		
+		left_key  = right_key
+		right_key = f
+
+	final_key = right_key[2:] + left_key[2:]
+	for c in ip_inverse:
+		plaintext = plaintext + final_key[int(c)-1]
+
+	return plaintext
+	
+def encode(plaintext, permuted_keys):
+	plaintext = format(plaintext, '#066b')
+	ciphertext = ''
+	ip = '0b'
+	
+	for c in init_permute:
+		ip = ip + plaintext[int(c)+1]
+
+	left_key  = ip[:34]
+	right_key = '0b' + ip[34:70]
 	
 	for n in range(16):
-		left_blocks  = [right_key]
 		f = '0b'
 		for c in e_bit_table:
 			f = f + right_key[int(c)+1]
@@ -159,80 +206,31 @@ def decode(ciphertext, permuted_keys):
 		right = xor(f, permuted_keys[n]) # this is K_n xor E(R_n-1)
 		# use s-blocks
 		s_output = s_block(s1, str(right[2:8]))
-		s_output = s_output + s_block(s1, right[8:14])[2:]
-		s_output = s_output + s_block(s1, right[14:20])[2:]
-		s_output = s_output + s_block(s1, right[20:26])[2:]
-		s_output = s_output + s_block(s1, right[26:32])[2:]
-		s_output = s_output + s_block(s1, right[32:38])[2:]
-		s_output = s_output + s_block(s1, right[38:44])[2:]
-		s_output = s_output + s_block(s1, right[44:50])[2:]
-		
-		s_output = s_block(s2, str(right[2:8]))
 		s_output = s_output + s_block(s2, right[8:14])[2:]
-		s_output = s_output + s_block(s2, right[14:20])[2:]
-		s_output = s_output + s_block(s2, right[20:26])[2:]
-		s_output = s_output + s_block(s2, right[26:32])[2:]
-		s_output = s_output + s_block(s2, right[32:38])[2:]
-		s_output = s_output + s_block(s2, right[38:44])[2:]
-		s_output = s_output + s_block(s2, right[44:50])[2:]
-		
-		s_output = s_block(s3, str(right[2:8]))
-		s_output = s_output + s_block(s3, right[8:14])[2:]
 		s_output = s_output + s_block(s3, right[14:20])[2:]
-		s_output = s_output + s_block(s3, right[20:26])[2:]
-		s_output = s_output + s_block(s3, right[26:32])[2:]
-		s_output = s_output + s_block(s3, right[32:38])[2:]
-		s_output = s_output + s_block(s3, right[38:44])[2:]
-		s_output = s_output + s_block(s3, right[44:50])[2:]
-		
-		s_output = s_block(s4, str(right[2:8]))
-		s_output = s_output + s_block(s4, right[8:14])[2:]
-		s_output = s_output + s_block(s4, right[14:20])[2:]
 		s_output = s_output + s_block(s4, right[20:26])[2:]
-		s_output = s_output + s_block(s4, right[26:32])[2:]
-		s_output = s_output + s_block(s4, right[32:38])[2:]
-		s_output = s_output + s_block(s4, right[38:44])[2:]
-		s_output = s_output + s_block(s4, right[44:50])[2:]
-		
-		s_output = s_block(s5, str(right[2:8]))
-		s_output = s_output + s_block(s5, right[8:14])[2:]
-		s_output = s_output + s_block(s5, right[14:20])[2:]
-		s_output = s_output + s_block(s5, right[20:26])[2:]
 		s_output = s_output + s_block(s5, right[26:32])[2:]
-		s_output = s_output + s_block(s5, right[32:38])[2:]
-		s_output = s_output + s_block(s5, right[38:44])[2:]
-		s_output = s_output + s_block(s5, right[44:50])[2:]
-		
-		s_output = s_block(s6, str(right[2:8]))
-		s_output = s_output + s_block(s6, right[8:14])[2:]
-		s_output = s_output + s_block(s6, right[14:20])[2:]
-		s_output = s_output + s_block(s6, right[20:26])[2:]
-		s_output = s_output + s_block(s6, right[26:32])[2:]
 		s_output = s_output + s_block(s6, right[32:38])[2:]
-		s_output = s_output + s_block(s6, right[38:44])[2:]
-		s_output = s_output + s_block(s6, right[44:50])[2:]
-		
-		s_output = s_block(s7, str(right[2:8]))
-		s_output = s_output + s_block(s7, right[8:14])[2:]
-		s_output = s_output + s_block(s7, right[14:20])[2:]
-		s_output = s_output + s_block(s7, right[20:26])[2:]
-		s_output = s_output + s_block(s7, right[26:32])[2:]
-		s_output = s_output + s_block(s7, right[32:38])[2:]
 		s_output = s_output + s_block(s7, right[38:44])[2:]
-		s_output = s_output + s_block(s7, right[44:50])[2:]
-		
-		s_output = s_block(s8, str(right[2:8]))
-		s_output = s_output + s_block(s8, right[8:14])[2:]
-		s_output = s_output + s_block(s8, right[14:20])[2:]
-		s_output = s_output + s_block(s8, right[20:26])[2:]
-		s_output = s_output + s_block(s8, right[26:32])[2:]
-		s_output = s_output + s_block(s8, right[32:38])[2:]
-		s_output = s_output + s_block(s8, right[38:44])[2:]
 		s_output = s_output + s_block(s8, right[44:50])[2:]
 		
-		print(s_output)
+		f = '0b'
+		for i in p:
+			f = f + s_output[int(i)+1]
+		
+		#print(s_output)
+		#print(f)
+		
+		f = xor(f, left_key)
+		
+		left_key  = right_key
+		right_key = f
 
-	return plaintext
+	final_key = right_key[2:] + left_key[2:]
+	for c in ip_inverse:
+		ciphertext = ciphertext + final_key[int(c)-1]
+
+	return ciphertext
 	
 def xor(string1, string2):
 	str = '0b'
@@ -250,11 +248,9 @@ def xor(string1, string2):
 	return str
 	
 def s_block(s_n, bits):
-	print(len(bits))
 	row = bits[0] + bits[5]
 	col = bits[1:5]
 	
-	print(row)
 	row = int(row, 2)
 	col = int(col, 2)
 	
@@ -286,10 +282,23 @@ permute_keys = generate_subkeys()
 # convert text to hex input
 text = int('0x' + args.text, 16)
 
+
+output = ''
+
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
+	output = encode(text, permute_keys)
+	
+	# convert binary output to hex string
+	output = hex(int(output, 2))
+	
+	print('Encrypted ciphertext: ' + output[2:].upper())
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
-	decode(text, permute_keys)
-
+	output = decode(text, permute_keys)
+	
+	# convert binary output to hex string
+	output = hex(int(output, 2))
+	
+	print('Decrypted plaintext: ' + output[2:].upper())
