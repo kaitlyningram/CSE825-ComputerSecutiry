@@ -28,40 +28,38 @@ permute_key48 = [ 14, 17, 11, 24,  1,  5,
 				
 shift_num = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 	
-left_blocks  = []
-right_blocks = []
+def generate_subkeys():
+	# hardcoded key
+	key = 0x133457799bbcdff1
+	key = format(key, '#066b')
 	
-def permute_56bit():
-	str = '0b'
+	# convert key to 56-bit 
+	key56 = '0b'
 	for c in permute_key56:
-		# generate 56 bit key
-		str = str + key[int(c)+1]
-	return str
+		key56 = key56 + key[int(c)+1]
+		
+	# split left/right keys
+	left_key  = key56[:30]
+	right_key = '0b' + key56[30:66]
 	
-def permute_48bit():
-	str = '0b'
-	permuted_keys = []
-	for n in range(16):
-		combined_str = left_blocks[n+1][2:] + right_blocks[n+1][2:]
-		for c in permute_key48:
-			# generate 48 bit key
-			str = str + combined_str[int(c)-1]
-		permuted_keys += [str]
-	return permuted_keys
-	
-def generate_28bit(left_key, right_key):
 	left_blocks  = []
 	right_blocks = []
 	
-	left_blocks  += [left_key]
-	right_blocks += [right_key]
-	
-	for n in range(16):		
+	for n in range(16):
 		left_key, right_key = shift_key(left_key, right_key, shift_num[n])
 		left_blocks  += [left_key]
 		right_blocks += [right_key]
 	
-	return left_blocks, right_blocks
+	permuted_keys = []
+	
+	key48 = '0b'
+	for n in range(16):
+		combined_str = left_blocks[n][2:] + right_blocks[n][2:]
+		for c in permute_key48:
+			key48 = key48 + combined_str[int(c)-1]
+		permuted_keys += [key48]
+	
+	return permuted_keys
 
 def shift_key(left_key, right_key, shift):
 	left_key  = '0b' + left_key[2+shift:30] + left_key[2:2+shift]
@@ -91,25 +89,13 @@ elif not args.encrypt and not args.decrypt:
 		print('Invalid Input')
 		exit(1)
 
-# convert hex key into binary
-key = format(key, '#066b')
+# generate subkeys
+permute_keys = generate_subkeys()
 
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
 	
-	# generate 16 subkeys 
-	print('K   ' + str(key))
-	key = permute_56bit()
-	print('K+  ' + str(key))
-	
-	left_key  = key[:30]
-	right_key = '0b' + key[30:66]
-	print('C   ' + str(left_key))
-	print('D   ' + str(right_key))
-	
-	left_blocks, right_blocks = generate_28bit(left_key, right_key)
-	
-	permute_keys = permute_48bit()
+	print(permute_keys)
 	
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
