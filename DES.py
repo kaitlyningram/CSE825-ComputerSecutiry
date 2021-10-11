@@ -6,6 +6,7 @@
 # ******************************************************************************
 
 import argparse
+import time
 
 permute_key56 = [ 57, 49, 41, 33, 25, 17,  9,
 				   1, 58, 50, 42, 34, 26, 18,
@@ -103,9 +104,7 @@ ip_inverse = [40,  8, 48, 16, 56, 24, 64, 32,
 
 shift_num = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 	
-def generate_subkeys():
-	# hardcoded key
-	key = 0x13345779abbcdff1
+def generate_subkeys(key):
 	key = format(key, '#066b')
 	
 	# convert key to 56-bit 
@@ -261,6 +260,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--encrypt', action='store_true', help='encrypt the text')
 parser.add_argument('-d', '--decrypt', action='store_true', help='decrypt the text')
 parser.add_argument('text', help='text to encrypt or decrypt')
+parser.add_argument('-k', '--key', help='include decryption key')
 
 args = parser.parse_args()
 
@@ -276,13 +276,20 @@ elif not args.encrypt and not args.decrypt:
 		print('Invalid Input')
 		exit(1)
 
+start_time = time.time()
+
 # generate subkeys
-permute_keys = generate_subkeys()
+key = 0x13345779abbcdff1
+#permute_keys = generate_subkeys(key)
 
 output = ''
 
 if args.encrypt:
 	print('Encrypting text: ' + args.text)
+	
+	if args.key:
+		print('With key: ' + args.key) 
+		permute_keys = generate_subkeys(int(args.key, 16))
 	
 	hex_text = args.text.encode("utf-8").hex()
 	n = len(hex_text)
@@ -302,6 +309,10 @@ if args.encrypt:
 if args.decrypt:
 	print('Decrypting text: ' + args.text)
 	
+	if args.key:
+		print('With key: ' + args.key) 
+		permute_keys = generate_subkeys(int(args.key, 16))
+	
 	n = len(args.text)-2
 	hex_text = args.text[2:]
 	while n > 0:
@@ -314,3 +325,5 @@ if args.decrypt:
 	output = bytes.fromhex(output[2:])
 	
 	print('Decrypted plaintext: ' + output.decode('utf-8'))
+	
+	print(time.time() - start_time)
